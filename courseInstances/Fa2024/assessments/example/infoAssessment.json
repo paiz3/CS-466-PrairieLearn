@@ -1,0 +1,65 @@
+{
+    "uuid": "9dee2003-cfd5-4fb3-ab88-d69126b630aa",
+    "type": "Homework",
+    "title": "Example Assessment",
+    "set": "Gallery",
+    "number": "0",
+    "multipleInstance": false,
+    "maxPoints": 0,
+    "allowIssueReporting": false,
+    "allowAccess": [
+        {
+            "mode": "Public",
+            "credit": 100,
+            "startDate": "2024-08-11T09:00:00",
+            "endDate": "2024-12-22T09:00:00"
+        }
+    ],
+    "zones": [
+        {
+            "title": "Example Questions",
+            "questions": [
+                {
+                    "id": "element/integerInput",
+                    "points": 1
+                },
+                {
+                    "id": "element/multipleChoice",
+                    "points": 1
+                },
+                {
+                    "id": "element/stringInput",
+                    "points": 1
+                },
+                {
+                    "id": "Gallery/checkbox/simple",
+                    "points": 1
+                },
+                {
+                    "id": "Gallery/checkbox/complex",
+                    "points": 1
+                },
+                {
+                    "id": "Gallery/includeFigure/simple",
+                    "points": 1
+                },
+                {
+                    "id": "Gallery/includeFigure/complex",
+                    "points": 1
+                },
+                {
+                    "id": "Gallery/multipleChoice/simple",
+                    "points": 1
+                },
+                {
+                    "id": "Gallery/multipleChoice/complex",
+                    "points": 1
+                },
+                {
+                    "id": "Gallery/multipleChoice/advanced",
+                    "points": 1
+                }
+            ]
+        }
+    ]
+}
