@@ -2,10 +2,10 @@
     "uuid": "b6f79b58-6d9d-4860-a16a-bc6f6ee9828d",
     "type": "Homework",
     "title": "Survey - Programming background",
-    "set": "Gallery",
-    "number": "1",
+    "set": "Homework",
+    "number": "0",
     "multipleInstance": false,
-    "maxPoints": 0,
+    "maxPoints": 2,
     "allowIssueReporting": false,
     "allowAccess": [
         {
