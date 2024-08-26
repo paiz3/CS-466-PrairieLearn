@@ -17,10 +17,9 @@
     ],
     "zones": [
         {
-            "title": "Example Questions",
             "questions": [
                 {
-                    "id": "element/integerInput",
+                    "id": "Survey-Questions/Pre-Course-Background",
                     "points": 1
                 }
             ]
