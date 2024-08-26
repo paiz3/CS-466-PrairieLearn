@@ -1,9 +1,9 @@
 {
     "uuid": "b6f79b58-6d9d-4860-a16a-bc6f6ee9828d",
     "type": "Homework",
-    "title": "Example Assessment (copy 1)",
+    "title": "Survey - Programming background",
     "set": "Gallery",
-    "number": "0",
+    "number": "1",
     "multipleInstance": false,
     "maxPoints": 0,
     "allowIssueReporting": false,
@@ -11,8 +11,8 @@
         {
             "mode": "Public",
             "credit": 100,
-            "startDate": "2024-08-11T09:00:00",
-            "endDate": "2024-12-22T09:00:00"
+            "startDate": "2024-08-27T09:00:00",
+            "endDate": "2024-09-03T09:00:00"
         }
     ],
     "zones": [
@@ -21,42 +21,6 @@
             "questions": [
                 {
                     "id": "element/integerInput",
-                    "points": 1
-                },
-                {
-                    "id": "element/multipleChoice",
-                    "points": 1
-                },
-                {
-                    "id": "element/stringInput",
-                    "points": 1
-                },
-                {
-                    "id": "Gallery/checkbox/simple",
-                    "points": 1
-                },
-                {
-                    "id": "Gallery/checkbox/complex",
-                    "points": 1
-                },
-                {
-                    "id": "Gallery/includeFigure/simple",
-                    "points": 1
-                },
-                {
-                    "id": "Gallery/includeFigure/complex",
-                    "points": 1
-                },
-                {
-                    "id": "Gallery/multipleChoice/simple",
-                    "points": 1
-                },
-                {
-                    "id": "Gallery/multipleChoice/complex",
-                    "points": 1
-                },
-                {
-                    "id": "Gallery/multipleChoice/advanced",
                     "points": 1
                 }
             ]
