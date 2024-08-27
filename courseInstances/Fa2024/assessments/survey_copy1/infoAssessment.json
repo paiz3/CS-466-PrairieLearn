@@ -1,0 +1,28 @@
+{
+    "uuid": "2eec410c-7a57-4def-a017-400291613269",
+    "type": "Homework",
+    "title": "Survey - Programming background (copy 1)",
+    "set": "Homework",
+    "number": "0",
+    "multipleInstance": false,
+    "maxPoints": 2,
+    "allowIssueReporting": false,
+    "allowAccess": [
+        {
+            "mode": "Public",
+            "credit": 100,
+            "startDate": "2024-08-27T09:00:00",
+            "endDate": "2024-09-03T09:00:00"
+        }
+    ],
+    "zones": [
+        {
+            "questions": [
+                {
+                    "id": "Survey-Questions/Pre-Course-Background",
+                    "points": 1
+                }
+            ]
+        }
+    ]
+}
