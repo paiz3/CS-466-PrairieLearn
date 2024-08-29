@@ -7,21 +7,22 @@
     "multipleInstance": false,
     "maxPoints": 2,
     "allowIssueReporting": false,
-    "allowAccess": [{
-        "mode": "Public",
-        "credit": 100,
-        "startDate": "2024-08-27T09:00:00",
-        "endDate": "2024-08-29T09:00:00"
-    }],
-    "zones": [{
-        "questions": [{
-                "id": "Survey-Questions/Pre-Course-Background",
-                "points": 1
-            },
-            {
-                "id": "element/integerInput",
-                "points": 1
-            }
-        ]
-    }]
+    "allowAccess": [
+        {
+            "mode": "Public",
+            "credit": 100,
+            "startDate": "2024-08-27T09:00:00",
+            "endDate": "2024-08-29T09:00:00"
+        }
+    ],
+    "zones": [
+        {
+            "questions": [
+                {
+                    "id": "Survey-Questions/Pre-Course-Background",
+                    "points": 1
+                }
+            ]
+        }
+    ]
 }
