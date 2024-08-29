@@ -46,6 +46,7 @@ def prepare(element_html, data):
 
     pl.check_attribs(element, required_attribs, optional_attribs)
     name = pl.get_string_attrib(element, "answers-name")
+    pl.check_answers_names(data, name)
 
     partial_credit = pl.get_boolean_attrib(
         element, "partial-credit", PARTIAL_CREDIT_DEFAULT
@@ -359,7 +360,6 @@ def render(element_html, data):
             "question": True,
             "name": name,
             "editable": editable,
-            "uuid": pl.get_uuid(),
             "info": info,
             "answers": answerset,
             "inline": inline,
@@ -441,7 +441,6 @@ def render(element_html, data):
         else:
             html_params = {
                 "submission": True,
-                "uuid": pl.get_uuid(),
                 "parse_error": parse_error,
                 "inline": inline,
             }
@@ -509,13 +508,13 @@ def parse(element_html, data):
     n_submitted = len(submitted_key)
     if n_submitted > max_options_to_select or n_submitted < min_options_to_select:
         if min_options_to_select != max_options_to_select:
-            data["format_errors"][
-                name
-            ] = f"You must select between <b>{min_options_to_select}</b> and <b>{max_options_to_select}</b> options."
+            data["format_errors"][name] = (
+                f"You must select between <b>{min_options_to_select}</b> and <b>{max_options_to_select}</b> options."
+            )
         else:
-            data["format_errors"][
-                name
-            ] = f"You must select exactly <b>{min_options_to_select}</b> options."
+            data["format_errors"][name] = (
+                f"You must select exactly <b>{min_options_to_select}</b> options."
+            )
         return
 
 
