@@ -1,12 +1,14 @@
 import base64
 import pandas as pd
 import io
-import numpy as np
 import scipy as sp
 
+
 def generate(data):
+
     filename = "lab_data.csv"
     data["params"]["filename"] = filename
+
 
 def parse(data):
 
@@ -18,6 +20,7 @@ def parse(data):
     else:
         contents = None
 
+    # Get value from the file to compute the correct answer
     if contents is None:
         parse_error = 'Need to upload a file'
     else:
@@ -27,12 +30,11 @@ def parse(data):
             parse_error += 'torque column does not exist. '
         if 'angular_velocity' not in df.columns:
             parse_error += 'angular_velocity column does not exist'
-        if len(parse_error)<1: 
-            res = sp.stats.linregress(df['angular_velocity'],df['torque'])
+        if len(parse_error) < 1: 
+            res = sp.stats.linregress(df['angular_velocity'], df['torque'])
             data["correct_answers"]["ans1"] = res[0]
             data["correct_answers"]["ans2"] = res[1]
-            # print(data["correct_answers"])
-
-    data["format_errors"][
-        "_files"
-    ] = parse_error
+        else:
+            data["format_errors"][
+                "_files"
+            ] = parse_error
