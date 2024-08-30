@@ -1,0 +1,30 @@
+<pl-question-panel>
+
+  <p>Construct a logical expression with <strong>{{params.bool_string}}</strong> value.</p>
+
+
+  <pl-multiple-choice answers-name="a1" display="dropdown" hide-letter-keys="true" size="5" order="fixed">
+    <pl-answer correct="false">True</pl-answer>
+    <pl-answer correct="true">False</pl-answer>
+  </pl-multiple-choice>
+  <pl-multiple-choice answers-name="a2" display="dropdown" hide-letter-keys="true" size="5" order="fixed">
+    <pl-answer correct="false">AND</pl-answer>
+    <pl-answer correct="true">OR</pl-answer>
+  </pl-multiple-choice>
+  <pl-multiple-choice answers-name="a3" display="dropdown" hide-letter-keys="true" size="5" order="fixed">
+    <pl-answer correct="false">True</pl-answer>
+    <pl-answer correct="true">False</pl-answer>
+  </pl-multiple-choice>
+
+
+</pl-question-panel>
+
+
+<pl-submission-panel>
+  {{feedback.comments}}
+</pl-submission-panel>
+
+
+
+
+
