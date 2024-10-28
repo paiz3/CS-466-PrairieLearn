@@ -1,0 +1,17 @@
+{
+    "uuid": "b7e47018-aac9-4660-a031-1dab1109b421",
+    "type": "Homework",
+    "title": "sequanceAlignment",
+    "set": "Homework",
+    "number": "1",
+    "allowAccess": [],
+    "zones": [
+        {
+            "questions": [
+                {"id": "sequenceAlignment/globalAlignment", "points": 1},
+                {"id": "sequenceAlignment/fittingAlignment", "points": 1},
+                {"id": "sequenceAlignment/localAlignment", "points": 1}
+            ]
+        }
+    ]
+}
