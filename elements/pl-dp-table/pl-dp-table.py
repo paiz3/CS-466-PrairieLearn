@@ -13,8 +13,8 @@ IGNORE_CASE_DEFAULT = False
 SIZE_DEFAULT = 35
 SHOW_HELP_TEXT_DEFAULT = True
 SHOW_SCORE_DEFAULT = True
-DEFAULT_ROW_RESULT = None
-DEFAULT_CORRECT_ANSWER = None
+CELL_VALUE_DEFAULT = "0"
+CORRECT_ANSWER_DEFAULT = None
 
 DP_TABLE_MUSTACHE_TEMPLATE_NAME = "pl-dp-table.mustache"
 
@@ -94,10 +94,13 @@ def render(element_html: str, data: pl.QuestionData) -> str:
                 {
                     "col_index": j,
                     "row_index": i,
-                    "value": data["submitted_answers"].get(f"{name}_{i}_{j}", "0"),
+                    "value": data["submitted_answers"].get(f"{name}_{i}_{j}", CELL_VALUE_DEFAULT),
                     "boolean": data["submitted_answers"].get(
                         f"{name}_{i}_{j}_p", False
                     ),
+                    "correct": False,
+                    "incorrect": False,
+                    "input_error": data["format_errors"].get(f"{name}_{i}_{j}", None),
                 }
             )
         rows.append(row)
