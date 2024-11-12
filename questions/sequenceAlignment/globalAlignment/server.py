@@ -70,7 +70,7 @@ def global_alignment(v, w, delta):
             max_list = sorted(max_list, reverse=True)
             M[i][j], pointers[i][j] = max_list[0]
     alignment, path = traceback_global(v, w, pointers)
-    return M, alignment, path
+    return M, alignment, path, M[len(v)][len(w)]
 
 
 def generate(data):

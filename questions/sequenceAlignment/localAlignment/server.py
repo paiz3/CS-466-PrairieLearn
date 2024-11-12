@@ -75,8 +75,7 @@ def local_align(v, w, delta):
     score_list = sorted(score_list, reverse=True)
     score, [init_i, init_j] = score_list[0]
     alignment, path = traceback_local(v, w, M, init_i, init_j, pointers)
-    return M, alignment, path
-
+    return M, alignment, path, score
 
 def generate(data):
     # Generate a random string of length 4

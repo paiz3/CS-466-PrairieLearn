@@ -24,12 +24,14 @@
                         <div class="input-container" data-cell="{{name}}_{{row_index}}_{{col_index}}">
                             <input type="number" step="any" name="{{name}}_{{row_index}}_{{col_index}}" 
                                 class="form-control {{#boolean}}highlight-true{{/boolean}}{{^boolean}}highlight-false{{/boolean}}" 
+                                onclick="this.select()"
                                 value="{{value}}" placeholder="0"/>
                             <!-- Hidden input to store the boolean value -->
                             <input type="hidden" name="{{name}}_{{row_index}}_{{col_index}}_p" value="{{#boolean}}True{{/boolean}}{{^boolean}}False{{/boolean}}" />
-                            <button type="button" class="btn btn-sm btn-highlight {{#boolean}}highlight-true{{/boolean}}{{^boolean}}highlight-false{{/boolean}}"
-                                    data-cell="{{name}}_{{row_index}}_{{col_index}}" 
-                                    onclick="highlightCell(this)">
+                            <button id="highlight-button" type="button" class="btn btn-sm btn-highlight {{#boolean}}highlight-true{{/boolean}}{{^boolean}}highlight-false{{/boolean}}"
+                                data-cell="{{name}}_{{row_index}}_{{col_index}}" 
+                                onclick="highlightCell(this)">
+                            <i class="bi bi-highlighter fa-xs"></i>
                             </button>
                             <span class="input-group-append">
                                 {{#show_partial_score}}
@@ -96,6 +98,16 @@
     {{/missing_input}}
 </span>
 {{/error}}
+{{#all_correct}}
+<div class="border border-success border-2 rounded-3">
+    <p class="text-center"> You got it all correct! </p>
+</div>
+{{/all_correct}}
+{{^all_correct}}
+<div class="border border-danger border-2 rounded-3">
+    <p class="text-center"> {{incorrect_message}} </p>
+</div>
+{{/all_correct}}
 <div class="t-tbl-block">
     <table class="dp-table rounded-3 overflow-hidden">
         <thead>

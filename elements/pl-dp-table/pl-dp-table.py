@@ -15,9 +15,11 @@ SHOW_HELP_TEXT_DEFAULT = True
 SHOW_SCORE_DEFAULT = True
 CELL_VALUE_DEFAULT = "0"
 CORRECT_ANSWER_DEFAULT = None
+PENALTY_SCORE_DEFAULT = 1
 
 DP_TABLE_MUSTACHE_TEMPLATE_NAME = "pl-dp-table.mustache"
 
+incorrect_message = ""
 
 def prepare(element_html: str, data: pl.QuestionData) -> None:
     element = lxml.html.fragment_fromstring(element_html)
@@ -25,7 +27,6 @@ def prepare(element_html: str, data: pl.QuestionData) -> None:
     optional_attribs = [
         "v",
         "w",
-        "weight",
         "label",
         "display",
         "placeholder",
@@ -49,8 +50,9 @@ def prepare(element_html: str, data: pl.QuestionData) -> None:
     # convert the correct answers to a dictionary of dictionaries
     if name in data["correct_answers"]:
         # split the string by newlines
-        matrix, alignment, path = data["correct_answers"][name]
+        matrix, alignment, path, score = data["correct_answers"][name]
         # split each row by spaces
+        data["correct_answers"][f"{name}_score"] = score
         for row_index in range(num_rows):
             for col_index in range(num_columns):
                 data["correct_answers"][f"{name}_{row_index}_{col_index}"] = matrix[
@@ -62,7 +64,6 @@ def prepare(element_html: str, data: pl.QuestionData) -> None:
         data["correct_answers"].pop(name)
     else:
         raise ValueError(f"Correct answers for {name} not found in data.")
-
 
 def render(element_html: str, data: pl.QuestionData) -> str:
     element = lxml.html.fragment_fromstring(element_html)
@@ -76,13 +77,79 @@ def render(element_html: str, data: pl.QuestionData) -> str:
     show_score = pl.get_boolean_attrib(element, "show-score", SHOW_SCORE_DEFAULT)
 
     raw_submitted_answer = data["raw_submitted_answers"].get(name)
-
     parse_error = data["format_errors"].get(name)
+    all_correct = data["score"] == 1
 
     v_string = "-" + data["params"].get("v")
     w_string = "-" + data["params"].get("w")
     num_rows = len(v_string)
     num_columns = len(w_string)
+    
+    incorrect_message = ""
+    if not all_correct and data["submitted_answers"].get(f"{name}_0_0", None) is not None:
+        found = False
+        for i in range(num_rows):
+            for j in range(num_columns):
+                if data["partial_scores"].get(f"{name}_{i}_{j}", {"score": None})[
+                    "score"
+                ] == 0:
+                    incorrect_message = f"You made a mistake when filling the number ({v_string[i]}, {w_string[j]}) at row {i}, column {j}. Please correct it and check all dependend cells. You will not get any feedback on the path before you get all numbers correct."
+                    found = True
+                    break
+            if found:
+                break
+        if not found:
+            # Get the path input
+            highlighted_path = []
+            for row_index in range(num_rows):
+                for col_index in range(num_columns):
+                    answer_name = f"{name}_{row_index}_{col_index}_p"
+                    a_sub = data["submitted_answers"].get(answer_name, None)
+                    if a_sub is not None and a_sub == True:   
+                        highlighted_path.append([row_index, col_index])
+            if len(highlighted_path) == 0:
+                incorrect_message = "You have not selected any path. Please select a path."
+                found = True
+            if not found:
+                # check start index
+                i, j = highlighted_path[0]
+                a_sub = data["correct_answers"].get(f"{name}_{i}_{j}", None)
+                if a_sub is not None and a_sub != 0:
+                    incorrect_message = "You path has wrong staring index. Please correct it and check all dependend cells."
+                    found = True
+                # check end index
+                i, j = highlighted_path[-1]
+                a_sub = data["correct_answers"].get(f"{name}_{i}_{j}", None)
+                score = data["correct_answers"].get(f"{name}_score", None)
+                if a_sub is not None and score is not None and a_sub != score:
+                    incorrect_message = "You path has wrong ending index. Please correct it and check all dependend cells."
+                    found = True
+                # TODO: check start and end based on the type of alignment
+                if not found:
+                    p_i, p_j, i, j = -1, -1, 0, 0
+                    while len(highlighted_path) > 0:
+                        i, j = highlighted_path.pop(0)
+                        if p_i >= 0 and p_j >= 0:
+                            a_sub = data["correct_answers"].get(f"{name}_{i}_{j}", None)
+                            a_sub_p = data["correct_answers"].get(f"{name}_{p_i}_{p_j}", None)
+                            if i == p_i + 1 and j == p_j + 1:
+                                # move TOPLEFT  
+                                if not a_sub == a_sub_p + PENALTY_SCORE_DEFAULT:
+                                    found = True
+                            elif i == p_i + 1 and j == p_j:
+                                # move TOP
+                                if not a_sub == a_sub_p - PENALTY_SCORE_DEFAULT:
+                                    found = True
+                            elif i == p_i and j == p_j + 1:
+                                # move LEFT
+                                if not a_sub == a_sub_p - PENALTY_SCORE_DEFAULT:
+                                    found = True
+                            else:
+                                found = True
+                            if found:
+                                incorrect_message = f"You path is incorrect at ({v_string[i]}, {w_string[j]}) at row {i}, column {j}. Please correct it and check all dependend cells."
+                                break
+                        p_i, p_j = i, j
 
     columns = [{"w_letter": w} for w in w_string]
     rows = []
@@ -106,18 +173,6 @@ def render(element_html: str, data: pl.QuestionData) -> str:
         rows.append(row)
 
     correct_results = {}
-    # when fixed table
-    # for row_index in range(num_rows):
-    #     for col_index in range(num_columns):
-    #         answer_name = f"{name}_{row_index}_{col_index}"
-    #         # Fetch the correct answer for each row and column combination
-    #         correct_result = pl.from_json(data["correct_answers"].get(answer_name, DEFAULT_CORRECT_ANSWER))
-    #         if row_index not in correct_results:
-    #             correct_results[row_index] = []
-    #         correct_results[row_index].append(correct_result)
-    # # Now populate the correct results in rows
-    # for row_index in range(num_rows):
-    #     rows[row_index]["correct_results"] = correct_results[row_index]
 
     # Get template
     with open(DP_TABLE_MUSTACHE_TEMPLATE_NAME, "r", encoding="utf-8") as f:
@@ -193,6 +248,8 @@ def render(element_html: str, data: pl.QuestionData) -> str:
             "columns": columns,
             "rows": rows,
             # "correct_results": correct_results,
+            "all_correct": all_correct,
+            "incorrect_message": incorrect_message,
         }
         for row_index in range(num_rows):
             for col_index in range(num_columns):
@@ -329,6 +386,8 @@ def parse(element_html: str, data: pl.QuestionData) -> None:
 
 
 def grade(element_html: str, data: pl.QuestionData) -> None:
+    global incorrect_message
+    
     element = lxml.html.fragment_fromstring(element_html)
     name = pl.get_string_attrib(element, "answers-name")
 
@@ -344,9 +403,15 @@ def grade(element_html: str, data: pl.QuestionData) -> None:
     num_rows = len(v_string)
     num_columns = len(w_string)
 
-    # Get weight
-    weight = pl.get_integer_attrib(element, "weight", WEIGHT_DEFAULT)
-
+    # Validate the path input
+    highlighted_path = []
+    for row_index in range(num_rows):
+        for col_index in range(num_columns):
+            answer_name = f"{name}_{row_index}_{col_index}_p"
+            a_sub = data["submitted_answers"].get(answer_name, None)
+            if a_sub is not None and a_sub == True:   
+                highlighted_path.append([row_index, col_index])
+    
     for row_index in range(num_rows):
         for col_index in range(num_columns):
             # cheking the value
@@ -368,29 +433,60 @@ def grade(element_html: str, data: pl.QuestionData) -> None:
 
             if answer_name in data["submitted_answers"]:
                 pl.grade_answer_parameterized(
-                    data, answer_name, grade_function, weight=weight
+                    data, answer_name, grade_function, weight = 1 / (num_rows * num_columns)
                 )
-            # cheking the path
+
+    # Check the path input
+    highlighted_path = []
+    for row_index in range(num_rows):
+        for col_index in range(num_columns):
             answer_name = f"{name}_{row_index}_{col_index}_p"
-            b_tru = pl.from_json(data["correct_answers"].get(answer_name, False))
-            if b_tru is None:
-                break
-
-            def grade_function_(b_sub: Any) -> tuple[bool, None]:
-                try:
-                    # Convert both correct and submitted answers to float for comparison
-                    b_sub = pl.from_json(b_sub)
-                    return (
-                        b_sub == b_tru,
-                        None,
-                    )
-                except ValueError:
-                    return False, None
-
-            if answer_name in data["submitted_answers"]:
-                pl.grade_answer_parameterized(
-                    data, answer_name, grade_function_, weight=weight
-                )
+            a_sub = data["submitted_answers"].get(answer_name, None)
+            if a_sub is not None and a_sub == True:   
+                highlighted_path.append([row_index, col_index])
+    if len(highlighted_path) == 0:
+        incorrect_message = "You have not selected any path. Please select a path."
+        found = True
+    if not found:
+        # check start index
+        i, j = highlighted_path[0]
+        a_sub = data["correct_answers"].get(f"{name}_{i}_{j}", None)
+        if a_sub is not None and a_sub != 0:
+            incorrect_message = "You path has wrong staring index. Please correct it and check all dependend cells."
+            found = True
+        # check end index
+        i, j = highlighted_path[-1]
+        a_sub = data["correct_answers"].get(f"{name}_{i}_{j}", None)
+        score = data["correct_answers"].get(f"{name}_score", None)
+        if a_sub is not None and score is not None and a_sub != score:
+            incorrect_message = "You path has wrong ending index. Please correct it and check all dependend cells."
+            found = True
+        # TODO: check start and end based on the type of alignment
+        if not found:
+            p_i, p_j, i, j = -1, -1, 0, 0
+            while len(highlighted_path) > 0:
+                i, j = highlighted_path.pop(0)
+                if p_i >= 0 and p_j >= 0:
+                    a_sub = data["correct_answers"].get(f"{name}_{i}_{j}", None)
+                    a_sub_p = data["correct_answers"].get(f"{name}_{p_i}_{p_j}", None)
+                    if i == p_i + 1 and j == p_j + 1:
+                        # move TOPLEFT  
+                        if not a_sub == a_sub_p + PENALTY_SCORE_DEFAULT:
+                            found = True
+                    elif i == p_i + 1 and j == p_j:
+                        # move TOP
+                        if not a_sub == a_sub_p - PENALTY_SCORE_DEFAULT:
+                            found = True
+                    elif i == p_i and j == p_j + 1:
+                        # move LEFT
+                        if not a_sub == a_sub_p - PENALTY_SCORE_DEFAULT:
+                            found = True
+                    else:
+                        found = True
+                    if found:
+                        incorrect_message = f"You path is incorrect at ({v_string[i]}, {w_string[j]}) at row {i}, column {j}. Please correct it and check all dependend cells."
+                        break
+                p_i, p_j = i, j
 
 
 def test(element_html: str, data: pl.ElementTestData) -> None:

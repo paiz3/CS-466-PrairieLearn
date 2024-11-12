@@ -82,8 +82,7 @@ def fitting_align(short, reference, delta):
     score_list = sorted(score_list, reverse=True)
     score, init_j = score_list[0]
     alignment, path = traceback_fitting(short, reference, init_j, pointers)
-    return M, alignment, path
-
+    return M, alignment, path, score
 
 def generate(data):
     # Generate a random string of length 4
