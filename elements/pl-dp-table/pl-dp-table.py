@@ -120,9 +120,14 @@ def render(element_html: str, data: pl.QuestionData) -> str:
     with open(DP_TABLE_MUSTACHE_TEMPLATE_NAME, "r", encoding="utf-8") as f:
         template = f.read()
     if data["panel"] == "question":
+        info_template = '{{#format}}<p>{{grading_text}}</p>{{/format}}'
+        grading_text = "For each cell, enter number for the upper half and click the lower part to highlight."
         editable = data["editable"]
-        info_params = {"format": True}
-        info = chevron.render(template, info_params).strip()
+        info_params = {
+            "format": True,
+            "grading_text" : grading_text,
+        }
+        info = chevron.render(info_template, info_params).strip()
         show_help_text = pl.get_boolean_attrib(
             element, "show-help-text", SHOW_HELP_TEXT_DEFAULT
         )
