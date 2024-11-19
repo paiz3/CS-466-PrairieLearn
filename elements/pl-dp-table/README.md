@@ -6,9 +6,9 @@ A customizable DP table designed to handle both instructional materials (where a
 
 Add this element to the question's HTML template and customize as desired. This can go anywhere in the question template, and it will render a truth table.
 
-    ```html
+```html
     <pl-dp-table answers-name="q1"></pl-dp-table>
-    ```
+```
 
 ### Element Attributes
 
