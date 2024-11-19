@@ -78,12 +78,7 @@ def local_align(v, w, delta):
     return M, alignment, path, score
 
 def generate(data):
-    # Generate a random string of length 4
-    v, w, _ = generate_paired_sequences(4)
-
-    # Put these two integers into data['params']
-    data["params"]["v"] = v
-    data["params"]["w"] = w
+    data["params"]["v"], data["params"]["w"], _ = generate_paired_sequences(4)
 
     ###### Quesiton 3 ########
-    data["correct_answers"]["q3"] = local_align(v, w, delta)
+    data["correct_answers"]["q3"] = local_align(data["params"]["v"], data["params"]["w"], delta)

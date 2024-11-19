@@ -74,12 +74,7 @@ def global_alignment(v, w, delta):
 
 
 def generate(data):
-    # Generate a random string of length 4
-    v, w, _ = generate_paired_sequences(4)
-
-    # Put these two integers into data['params']
-    data["params"]["v"] = v
-    data["params"]["w"] = w
+    data["params"]["v"], data["params"]["w"], _ = generate_paired_sequences(4)
 
     ###### Quesiton 1 ########
-    data["correct_answers"]["q1"] = global_alignment(v, w, delta)
+    data["correct_answers"]["q1"] = global_alignment(data["params"]["v"], data["params"]["w"], delta)

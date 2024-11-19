@@ -4,11 +4,13 @@
         <thead>
             <tr>
                 <th>
+                    {{^is_material}}
                     {{#info}}
                         <a role="button" class="btn btn-sm btn-light border" data-toggle="popover" data-html="true" title="String" data-content="{{info}}" data-placement="auto" data-trigger="focus" tabindex="0">
                             <i class="fa fa-question-circle" aria-hidden="true"></i>
                         </a>
                     {{/info}}
+                    {{/is_material}}
                 </th>
                 {{#columns}}
                     <th>{{w_letter}}</th>
@@ -21,7 +23,11 @@
                 <td>{{v_letter}}</td>
                 {{#is_material}}
                 <!-- If it is question material, display correct answer directly -->
-                    <td>{{correct_result}}</td>
+                    {{#data}}
+                        <td class="{{#boolean}}highlight-true{{/boolean}}{{^boolean}}highlight-false{{/boolean}}">
+                            {{value}}
+                        </td>
+                    {{/data}}
                 {{/is_material}}
                 {{^is_material}}
                 <!-- If it is question-required material, use input field -->

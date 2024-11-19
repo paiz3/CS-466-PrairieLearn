@@ -13,7 +13,7 @@ IGNORE_CASE_DEFAULT = False
 SIZE_DEFAULT = 35
 SHOW_HELP_TEXT_DEFAULT = True
 SHOW_SCORE_DEFAULT = True
-CELL_VALUE_DEFAULT = "0"
+CELL_VALUE_DEFAULT = 0
 CORRECT_ANSWER_DEFAULT = None
 PENALTY_SCORE_DEFAULT = 1
 
@@ -24,16 +24,7 @@ def prepare(element_html: str, data: pl.QuestionData) -> None:
     element = lxml.html.fragment_fromstring(element_html)
     required_attribs = ["answers-name"]
     optional_attribs = [
-        "v",
-        "w",
-        "label",
-        "display",
         "placeholder",
-        "size",
-        "show-help-text",
-        "normalize-to-ascii",
-        "show-score",
-        "char-limit",
         "is-material",
     ]
     pl.check_attribs(element, required_attribs, optional_attribs)
@@ -88,6 +79,8 @@ def render(element_html: str, data: pl.QuestionData) -> str:
     columns = [{"w_letter": w} for w in w_string]
     rows = []
 
+    prefill = pl.get_string_attrib(element, "prefill", CELL_VALUE_DEFAULT)
+
     for i, v_letter in enumerate(v_string):
         row = {"v_letter": v_letter, "data": []}  # First column letter from w
         for j, w_letter in enumerate(w_string):
@@ -96,7 +89,7 @@ def render(element_html: str, data: pl.QuestionData) -> str:
                     "col_index": j,
                     "row_index": i,
                     "value": data["submitted_answers"].get(
-                        f"{name}_{i}_{j}", CELL_VALUE_DEFAULT
+                        f"{name}_{i}_{j}", prefill
                     ),
                     "boolean": data["submitted_answers"].get(
                         f"{name}_{i}_{j}_p", False
