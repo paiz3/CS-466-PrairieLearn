@@ -6,7 +6,7 @@
                 <th>
                     {{^is_material}}
                     {{#info}}
-                        <a role="button" class="btn btn-sm btn-light border" data-toggle="popover" data-html="true" title="String" data-content="{{info}}" data-placement="auto" data-trigger="focus" tabindex="0">
+                        <a role="button" class="btn btn-sm btn-light border" data-toggle="popover" data-html="true" title="DP table" data-content="{{info}}" data-placement="auto" data-trigger="focus" tabindex="0">
                             <i class="fa fa-question-circle" aria-hidden="true"></i>
                         </a>
                     {{/info}}
@@ -34,10 +34,18 @@
                 {{#data}}
                     <td data-row="{{row_index}}" data-col="{{col_index}}" class="alignment-cell">
                         <div class="input-container" data-cell="{{name}}_{{row_index}}_{{col_index}}">
+                            {{#path_only}}
                             <input type="number" step="any" name="{{name}}_{{row_index}}_{{col_index}}" 
                                 class="form-control {{#boolean}}highlight-true{{/boolean}}{{^boolean}}highlight-false{{/boolean}}" 
                                 onclick="this.select()"
-                                value="{{value}}" placeholder="0"/>
+                                value="{{value}}" placeholder="{{placeholder}}" readonly/>
+                            {{/path_only}}
+                            {{^path_only}}
+                            <input type="number" name="{{name}}_{{row_index}}_{{col_index}}" 
+                                class="form-control {{#boolean}}highlight-true{{/boolean}}{{^boolean}}highlight-false{{/boolean}}" 
+                                onclick="this.select()"
+                                value="{{value}}" placeholder="{{placeholder}}"/>
+                            {{/path_only}}
                             <!-- Hidden input to store the boolean value -->
                             <input type="hidden" name="{{name}}_{{row_index}}_{{col_index}}_p" value="{{#boolean}}True{{/boolean}}{{^boolean}}False{{/boolean}}" />
                             <button id="highlight-button" type="button" class="btn btn-sm btn-highlight {{#boolean}}highlight-true{{/boolean}}{{^boolean}}highlight-false{{/boolean}}"

@@ -89,3 +89,4 @@ def generate(data):
 
     ###### Quesiton 2 ########
     data["correct_answers"]["q2"] = fitting_align(data["params"]["v"], data["params"]["w"], delta)
+    data["params"]["int1"] = fitting_align(data["params"]["v"], data["params"]["w"], delta)[3]

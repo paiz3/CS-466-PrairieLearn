@@ -114,7 +114,8 @@
 /* Focus and hover states for input fields */
 .dp-table input[type="number"]:hover,
 .dp-table input[type="number"]:focus,
-.dp-table .btn-highlight:hover {
+.dp-table .btn-highlight:hover,
+.dp-table .btn-highlight:focus {
     border-color: #3b82f6;
     outline: none;
     box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);

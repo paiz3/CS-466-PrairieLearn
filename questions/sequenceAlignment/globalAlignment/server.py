@@ -78,3 +78,4 @@ def generate(data):
 
     ###### Quesiton 1 ########
     data["correct_answers"]["q1"] = global_alignment(data["params"]["v"], data["params"]["w"], delta)
+    data["params"]["str1"], data["params"]["str2"] = global_alignment(data["params"]["v"], data["params"]["w"], delta)[1].split("\n")

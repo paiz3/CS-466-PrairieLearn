@@ -16,6 +16,7 @@ SHOW_SCORE_DEFAULT = True
 CELL_VALUE_DEFAULT = 0
 CORRECT_ANSWER_DEFAULT = None
 PENALTY_SCORE_DEFAULT = 1
+ALIGNMENT_TYPE_DEFAULT = "global"
 
 DP_TABLE_MUSTACHE_TEMPLATE_NAME = "pl-dp-table.mustache"
 
@@ -26,9 +27,10 @@ def prepare(element_html: str, data: pl.QuestionData) -> None:
     optional_attribs = [
         "placeholder",
         "is-material",
+        "path-only",
+        "type",
     ]
     pl.check_attribs(element, required_attribs, optional_attribs)
-
     name = pl.get_string_attrib(element, "answers-name")
     pl.check_answers_names(data, name)
 
@@ -64,6 +66,7 @@ def render(element_html: str, data: pl.QuestionData) -> str:
     is_material = pl.get_boolean_attrib(
         element, "is-material", False
     )  # Default to False if not specified
+    path_only = pl.get_boolean_attrib(element, "path-only", False)
     placeholder = pl.get_string_attrib(element, "placeholder", PLACEHOLDER_DEFAULT)
     show_score = pl.get_boolean_attrib(element, "show-score", SHOW_SCORE_DEFAULT)
 
@@ -84,16 +87,33 @@ def render(element_html: str, data: pl.QuestionData) -> str:
     for i, v_letter in enumerate(v_string):
         row = {"v_letter": v_letter, "data": []}  # First column letter from w
         for j, w_letter in enumerate(w_string):
+            numerical_answer = ""
+            boolean_answer = False
+            if is_material:
+                numerical_answer = pl.from_json(
+                    data["correct_answers"].get(f"{name}_{i}_{j}", "")
+                )
+                boolean_answer = pl.from_json(data["correct_answers"].get(f"{name}_{i}_{j}_p", False))
+            elif path_only:
+                numerical_answer = pl.from_json(
+                    data["correct_answers"].get(f"{name}_{i}_{j}", "")
+                )
+                boolean_answer = data["submitted_answers"].get(
+                    f"{name}_{i}_{j}_p", False
+                )
+            else:
+                numerical_answer = data["submitted_answers"].get(
+                    f"{name}_{i}_{j}", prefill
+                )
+                boolean_answer = data["submitted_answers"].get(
+                    f"{name}_{i}_{j}_p", False
+                )
             row["data"].append(
                 {
                     "col_index": j,
                     "row_index": i,
-                    "value": data["submitted_answers"].get(
-                        f"{name}_{i}_{j}", prefill
-                    ),
-                    "boolean": data["submitted_answers"].get(
-                        f"{name}_{i}_{j}_p", False
-                    ),
+                    "value": numerical_answer,
+                    "boolean": boolean_answer,
                     "correct": False,
                     "incorrect": False,
                     "input_error": data["format_errors"].get(f"{name}_{i}_{j}", None),
@@ -134,6 +154,7 @@ def render(element_html: str, data: pl.QuestionData) -> str:
             "rows": rows,
             "correct_results": correct_results,
             "is_material": is_material,
+            "path_only": path_only,
         }
         for row_index in range(num_rows):
             for col_index in range(num_columns):
@@ -314,6 +335,8 @@ def grade(element_html: str, data: pl.QuestionData) -> None:
 
     # Check if the question is marked as material (informational)
     is_material = pl.get_boolean_attrib(element, "is-material", False)
+    path_only = pl.get_boolean_attrib(element, "path-only", False)
+    alignment_type = pl.get_string_attrib(element, "type", ALIGNMENT_TYPE_DEFAULT)
 
     # If it's material, skip grading
     if is_material:
@@ -325,19 +348,20 @@ def grade(element_html: str, data: pl.QuestionData) -> None:
     num_columns = len(w_string)
 
     score_sum = 0
-    for row_index in range(num_rows):
-        for col_index in range(num_columns):
-            # cheking the value
-            answer_name = f"{name}_{row_index}_{col_index}"
-            a_tru = pl.from_json(data["correct_answers"].get(answer_name, None))
-            if a_tru is None:
-                break
-            a_sub = data["submitted_answers"].get(answer_name, None)
-            if a_tru != a_sub:
-                if incorrect_message == "":
-                    incorrect_message = f"You made a mistake when filling the number ({v_string[row_index]}, {w_string[col_index]}) at row {row_index}, column {col_index}. Please correct it and check all dependend cells. You will not get any feedback on the path before you get all numbers correct."
-            else:
-                score_sum += 1
+    if not path_only:
+        for row_index in range(num_rows):
+            for col_index in range(num_columns):
+                # cheking the value
+                answer_name = f"{name}_{row_index}_{col_index}"
+                a_tru = pl.from_json(data["correct_answers"].get(answer_name, None))
+                if a_tru is None:
+                    break
+                a_sub = data["submitted_answers"].get(answer_name, None)
+                if a_tru != a_sub:
+                    if incorrect_message == "":
+                        incorrect_message = f"You made a mistake when filling the number ({v_string[row_index]}, {w_string[col_index]}) at row {row_index}, column {col_index}. Please correct it and check all dependend cells. You will not get any feedback on the path before you get all numbers correct."
+                else:
+                    score_sum += 1
 
     path_score = 1
     # Check the path input
@@ -346,7 +370,8 @@ def grade(element_html: str, data: pl.QuestionData) -> None:
         for col_index in range(num_columns):
             answer_name = f"{name}_{row_index}_{col_index}_p"
             a_sub = data["submitted_answers"].get(answer_name, None)
-            if a_sub is not None and a_sub == True:
+
+            if a_sub is not None and a_sub is True:
                 highlighted_path.append([row_index, col_index])
     if len(highlighted_path) == 0:
         if incorrect_message == "":
@@ -355,6 +380,18 @@ def grade(element_html: str, data: pl.QuestionData) -> None:
     else:
         # check start index
         i, j = highlighted_path[0]
+        if alignment_type == "global":
+            # global alignment must start at (0, 0)
+            if i != 0 or j != 0:
+                if incorrect_message == "":
+                    incorrect_message = "You path has wrong staring index. Global alignment must start at (0, 0). Please correct it and check all dependend cells."
+                path_score = 0
+        elif alignment_type == "fitting":
+            # fitting alignment  must start at or (0, j)
+            if i != 0:
+                if incorrect_message == "":
+                    incorrect_message = "You path has wrong staring index. Fitting alignment must start at the first row. Please correct it and check all dependend cells."
+                path_score = 0
         a_sub = data["correct_answers"].get(f"{name}_{i}_{j}", None)
         if a_sub is not None and a_sub != 0:
             if incorrect_message == "":
@@ -362,13 +399,24 @@ def grade(element_html: str, data: pl.QuestionData) -> None:
             path_score = 0
         # check end index
         i, j = highlighted_path[-1]
+        if alignment_type == "global":
+            # global alignment must end at (len(v), len(w))
+            if i != num_rows - 1 or j != num_columns - 1:
+                if incorrect_message == "":
+                    incorrect_message = "You path has wrong ending index. Global alignment must end at (len(v), len(w)). Please correct it and check all dependend cells."
+                path_score = 0
+        elif alignment_type == "fitting":
+            # fitting alignment  must end at or (i, len(w))
+            if i != num_rows - 1:
+                if incorrect_message == "":
+                    incorrect_message = "You path has wrong ending index. Fitting alignment must end at the last row). Please correct it and check all dependend cells."
+                path_score = 0
         a_sub = data["correct_answers"].get(f"{name}_{i}_{j}", None)
         score = data["correct_answers"].get(f"{name}_score", None)
         if a_sub is not None and score is not None and a_sub != score:
             if incorrect_message == "":
                 incorrect_message = "You path has wrong ending index. Please correct it and check all dependend cells."
             path_score = 0
-        # TODO: check start and end based on the type of alignment
         if path_score == 1:
             p_i, p_j, i, j = -1, -1, 0, 0
             while len(highlighted_path) > 0:
@@ -388,7 +436,6 @@ def grade(element_html: str, data: pl.QuestionData) -> None:
                                 and a_sub == a_sub_p - PENALTY_SCORE_DEFAULT
                             )
                         ):
-                            print(a_sub, a_sub_p)
                             path_score = 0
                     elif i == p_i + 1 and j == p_j:
                         # move TOP
@@ -398,15 +445,23 @@ def grade(element_html: str, data: pl.QuestionData) -> None:
                         # move LEFT
                         if not a_sub == a_sub_p - PENALTY_SCORE_DEFAULT:
                             path_score = 0
+                    else:
+                        path_score = 0
                     if path_score == 0:
                         if incorrect_message == "":
-                            incorrect_message = f"You path is incorrect at ({v_string[i]}, {w_string[j]}) at row {i}, column {j}. Please correct it and check all dependend cells."
+                            incorrect_message = f"You path is incorrect at ({v_string[i]}, {w_string[j]}) at row {i}, column {j}.\n Please correct it and check all dependend cells."
                         break
                 p_i, p_j = i, j
-    data["partial_scores"][name] = {
-        "score": 0.5 * score_sum / (num_rows * num_columns) + 0.5 * path_score,
-        "feedback": incorrect_message,
-    }
+    if path_only:
+        data["partial_scores"][name] = {
+            "score": path_score,
+            "feedback": incorrect_message,
+        }
+    else:
+        data["partial_scores"][name] = {
+            "score": 0.5 * score_sum / (num_rows * num_columns) + 0.5 * path_score,
+            "feedback": incorrect_message,
+        }
 
 
 def test(element_html: str, data: pl.ElementTestData) -> None:

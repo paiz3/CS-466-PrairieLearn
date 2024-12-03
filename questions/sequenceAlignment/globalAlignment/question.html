@@ -1,11 +1,11 @@
 <pl-question-panel>
   <p>Consider two DNA sequences $\mathbf{v} = \mathrm{ {{params.v}} }$ and $\mathbf{w} = \mathrm{ {{params.w}} }$. </p>
-  <p>In this exercise, we will align the two sequences using a score of +1 for a match, -1 for a mismatch, and -1 for a insertion/deletion (i.e.\ a gap penalty of 1). </p>
-  <p>Use the <i class="bi bi-highlighter"></i> button at the bottom of each cell to hightlight <b>ONE</b> path that represents the optimum alighnment. When doing backtrace, prefer going UP, over TOPLEFT, over LEFT.</p>
+  <p>In this exercise, we will align the two sequences using a score of +1 for a match, -1 for a mismatch, and -1 for a insertion/deletion (i.e. a gap penalty of 1). </p>
+  <p>Given the following DP table and the optimal path, fill out the aligned sequence $\mathbf{v'}$ and $\mathbf{w'}$.</p>
+<pl-dp-table answers-name="q1" is-material="true" type="global"></pl-dp-table>
 </pl-question-panel>
 
-<pl-question-panel>
-  <p>Complete a global alignment of the two sequnces</p>
-</pl-question-panel>
-
-<pl-dp-table answers-name="q1"></pl-dp-table>
+<p style="text-align: center; font-family: monospace;">
+  <pl-string-input answers-name="str_input1" correct-answer="{{params.str1}}" label="&lt;span style='min-width: 2em'&gt;$\mathbf{v'}$&lt;/span&gt;"></pl-string-input>
+  <pl-string-input answers-name="str_input2" correct-answer="{{params.str2}}" label="&lt;span style='min-width: 2em'&gt;$\mathbf{w'}$&lt;/span&gt;"></pl-string-input>
+</p>  
