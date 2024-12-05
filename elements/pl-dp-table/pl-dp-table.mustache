@@ -76,11 +76,11 @@
         {{^path_only}}
         <button type="button" id="clear-table" class="btn btn-danger">Clear All Inputs</button>
         {{/path_only}}
-        {{#info}}
-        <a role="button" class="btn btn-light border" data-toggle="popover" data-html="true" title="DP table" data-content="{{info}}" data-placement="auto" data-trigger="focus" tabindex="0">
+        {{#}}
+        <a role="button" class="btn btn-light border" data-toggle="popover" data-html="true" title="DP table" data-content="{{{}}}" data-placement="auto" data-trigger="focus" tabindex="0">
             <i class="fa fa-question-circle" aria-hidden="true"></i>
         </a>
-        {{/info}}
+        {{/}}
         {{#all_correct}}
             <span class="badge badge-success badge-primary"><i class="fas fa-check" aria-hidden="true"></i> 100%</span>
         {{/all_correct}}    
@@ -148,7 +148,7 @@
             <tr>
                 <td>{{v_letter}}</td>
                 {{#data}}
-                    <td class="{{#boolean}}highlight-true{{/boolean}}{{^boolean}}highlight-false{{/boolean}}">
+                    <td class="{{#boolean}}{{#first_incorrect}}striped-highlight{{/first_incorrect}}{{^first_incorrect}}highlight-true{{/first_incorrect}}{{/boolean}}{{^boolean}}{{#first_incorrect}}striped-background{{/first_incorrect}}{{^first_incorrect}}highlight-false{{/first_incorrect}}{{/boolean}}">
                         {{value}}
                     </td>
                 {{/data}}

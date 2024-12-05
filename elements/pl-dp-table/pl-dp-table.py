@@ -1,3 +1,5 @@
+import html
+import re
 from typing import Any
 import math
 import chevron
@@ -74,7 +76,17 @@ def render(element_html: str, data: pl.QuestionData) -> str:
     parse_error = data["format_errors"].get(name)
     all_correct = data["score"] == 1
     all_wrong = data["score"] == 0
-    partial_score = data["score"] * 100
+    partial_score = str(round(data["score"] * 100, 2))
+
+    feedback = data["partial_scores"].get(name, {"feedback": ""}).get("feedback", "")
+    # Regular expression to capture i and j
+    pattern = r"at row (\d+), column (\d+)"
+    match = re.search(pattern, feedback)
+    i_extracted = -1
+    j_extracted = -1
+    if match:
+        i_extracted = int(match.group(1))  # The first captured group
+        j_extracted = int(match.group(2))  # The second captured group
 
     v_string = "-" + data["params"].get("v")
     w_string = "-" + data["params"].get("w")
@@ -119,6 +131,7 @@ def render(element_html: str, data: pl.QuestionData) -> str:
                     "correct": False,
                     "incorrect": False,
                     "input_error": data["format_errors"].get(f"{name}_{i}_{j}", None),
+                    "first_incorrect": i == i_extracted and j == j_extracted,
                 }
             )
         rows.append(row)
@@ -129,14 +142,17 @@ def render(element_html: str, data: pl.QuestionData) -> str:
     with open(DP_TABLE_MUSTACHE_TEMPLATE_NAME, "r", encoding="utf-8") as f:
         template = f.read()
     if data["panel"] == "question":
-        info_template = "{{#format}}<p>{{grading_text}}</p>{{/format}}"
-        grading_text = "For each cell, click upper half of the cell to enter number for the upper half. Use arrow keys to quickly navigate through the table. \nUse the highlight button at the bottom of each cell to hightlight ONE path that represents the optimum alignment."
+        info_template = "{{#format}}<p>{{{grading_text}}}</p>{{/format}}"
+        grading_text = ("For each cell, click upper half of the cell to enter number for the upper half. Use arrow keys to quickly navigate through the table. <br />" 
+                        "Use the <i class='bi bi-highlighter fa-xs'></i> button at the bottom of each cell to hightlight ONE path that represents the optimum alignment.")
         editable = data["editable"]
         info_params = {
             "format": True,
             "grading_text": grading_text,
         }
         info = chevron.render(info_template, info_params).strip()
+        info = html.escape(info, quote=True)
+        info = info.replace('"', "&quot;")
         show_help_text = pl.get_boolean_attrib(
             element, "show-help-text", SHOW_HELP_TEXT_DEFAULT
         )
@@ -198,9 +214,7 @@ def render(element_html: str, data: pl.QuestionData) -> str:
             "all_correct": all_correct,
             "all_wrong": all_wrong,
             "partial_score": partial_score,
-            "incorrect_message": data["partial_scores"]
-            .get(name, {"feedback": ""})
-            .get("feedback", ""),
+            "incorrect_message": feedback,
         }
         for row_index in range(num_rows):
             for col_index in range(num_columns):
@@ -366,7 +380,7 @@ def grade(element_html: str, data: pl.QuestionData) -> None:
                 a_sub = data["submitted_answers"].get(answer_name, None)
                 if a_tru != a_sub:
                     if incorrect_message == "":
-                        incorrect_message = f"You made a mistake when filling the number ({v_string[row_index]}, {w_string[col_index]}) at row {row_index}, column {col_index}. Please correct it and check all dependent cells. You will not get any feedback on the path before you get all numbers correct."
+                        incorrect_message = f"You made a mistake when filling the number ({v_string[row_index]}, {w_string[col_index]}) at row {row_index}, column {col_index} (Indicated by a stripe pattern). Please correct it and check all dependent cells.\n You will not get any feedback on the path before you get all numbers correct."
                 else:
                     score_sum += 1
 
@@ -427,36 +441,36 @@ def grade(element_html: str, data: pl.QuestionData) -> None:
         if path_score == 1:
             p_i, p_j, i, j = -1, -1, 0, 0
             while len(highlighted_path) > 0:
-                i, j = highlighted_path.pop(0)
+                i, j = highlighted_path.pop(-1)
                 if p_i >= 0 and p_j >= 0:
                     a_sub = data["correct_answers"].get(f"{name}_{i}_{j}", None)
                     a_sub_p = data["correct_answers"].get(f"{name}_{p_i}_{p_j}", None)
-                    if i == p_i + 1 and j == p_j + 1:
+                    if i == p_i - 1 and j == p_j - 1:
                         # move DIAGONAL
                         if not (
                             (
-                                v_string[i] == w_string[j]
-                                and a_sub == a_sub_p + PENALTY_SCORE_DEFAULT
+                                v_string[p_i] == w_string[p_j]
+                                and a_sub == a_sub_p - PENALTY_SCORE_DEFAULT
                             )
                             or (
-                                v_string[i] != w_string[j]
-                                and a_sub == a_sub_p - PENALTY_SCORE_DEFAULT
+                                v_string[p_i] != w_string[p_j]
+                                and a_sub == a_sub_p + PENALTY_SCORE_DEFAULT
                             )
                         ):
                             path_score = 0
-                    elif i == p_i + 1 and j == p_j:
+                    elif i == p_i - 1 and j == p_j:
                         # move TOP
-                        if not a_sub == a_sub_p - PENALTY_SCORE_DEFAULT:
+                        if not a_sub == a_sub_p + PENALTY_SCORE_DEFAULT:
                             path_score = 0
-                    elif i == p_i and j == p_j + 1:
+                    elif i == p_i and j == p_j - 1:
                         # move LEFT
-                        if not a_sub == a_sub_p - PENALTY_SCORE_DEFAULT:
+                        if not a_sub == a_sub_p + PENALTY_SCORE_DEFAULT:
                             path_score = 0
                     else:
                         path_score = 0
                     if path_score == 0:
                         if incorrect_message == "":
-                            incorrect_message = f"You path is incorrect at ({v_string[p_i]}, {w_string[p_j]}) at row {p_i}, column {p_j}.\n Please correct it and check all dependent cells."
+                            incorrect_message = f"You path is incorrect at ({v_string[i]}, {w_string[j]}) at row {i}, column {j} (Indicated by a stripe pattern). Please correct it and check all dependent cells."
                         break
                 p_i, p_j = i, j
     if path_only:

@@ -197,3 +197,23 @@
 .dp-table tr:hover {
     background-color: #e2e8f0;
 }
+
+.striped-highlight {
+    background: repeating-linear-gradient(
+        45deg,
+        #ffeb3b,
+        #ffeb3b 5px,
+        #fff 5px,
+        #fff 10px
+    );
+}
+
+.striped-background {
+    background: repeating-linear-gradient(
+        45deg,
+        lightgray,
+        lightgray 5px,
+        #fff 5px,
+        #fff 10px
+    );
+}
