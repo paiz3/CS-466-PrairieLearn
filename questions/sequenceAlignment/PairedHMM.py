@@ -35,7 +35,6 @@ transition_prob = {
     "J": {"J": epsilon, "M": 1 - epsilon},
 }
 
-
 # Function to choose the next state based on current state
 def next_state(current_state):
     transitions = transition_prob[current_state]

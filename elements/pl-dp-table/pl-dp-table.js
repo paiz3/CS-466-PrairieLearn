@@ -78,9 +78,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     );
                     break;
                 case "ArrowLeft": // Navigate left
+                    event.preventDefault(); // Prevent default behavior
                     nextIndex = index - 1;
                     break;
                 case "ArrowRight": // Navigate right
+                    event.preventDefault(); // Prevent default behavior
                     nextIndex = index + 1;
                     break;
                 default:
@@ -89,8 +91,56 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Ensure the nextIndex is within bounds and valid
             if (nextIndex >= 0 && nextIndex < sortedInputs.length) {
-                sortedInputs[nextIndex].focus();
+                const nextInput = sortedInputs[nextIndex];
+                nextInput.focus();
+                nextInput.select();
             }
         });
     });
+    // Function to clear inputs
+    function clearInputs(event) {
+        // Prevent any default behavior (e.g., form submission)
+        if (event) {
+            event.preventDefault();
+        }
+
+        // Select all number and hidden inputs in the table
+        const numberInputs = document.querySelectorAll("input[type='number']");
+        const boolInputs = document.querySelectorAll(".bool-input");
+
+        // Set number inputs to 0
+        numberInputs.forEach(input => {
+            input.value = 0;
+        });
+
+        // Set hidden inputs to "False"
+        boolInputs.forEach(input => {
+            input.value = false;
+
+            // Find the associated input container and its background
+            const container = input.closest(".input-container");
+            if (container) {
+                const numberInput = container.querySelector("input");
+                const button = container.querySelector("button");
+
+                if (numberInput) {
+                    numberInput.style.backgroundColor = 'rgb(249, 250, 251)' // Reset background color
+
+                }
+
+                if (button) {
+                    button.style.backgroundColor = 'rgb(249, 250, 251)' // Reset background color
+
+                }
+            }
+        });
+    }
+
+    // Attach event listener to the clear button
+    const clearButton = document.getElementById("clear-table");
+    if (clearButton) {
+        clearButton.addEventListener("click", clearInputs);
+    } else {
+        console.error("Clear button not found in the DOM.");
+    }
 });

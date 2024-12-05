@@ -3,15 +3,7 @@
     <table class="dp-table rounded-3 overflow-hidden">
         <thead>
             <tr>
-                <th>
-                    {{^is_material}}
-                    {{#info}}
-                        <a role="button" class="btn btn-sm btn-light border" data-toggle="popover" data-html="true" title="DP table" data-content="{{info}}" data-placement="auto" data-trigger="focus" tabindex="0">
-                            <i class="fa fa-question-circle" aria-hidden="true"></i>
-                        </a>
-                    {{/info}}
-                    {{/is_material}}
-                </th>
+                <th></th>
                 {{#columns}}
                     <th>{{w_letter}}</th>
                 {{/columns}}
@@ -47,7 +39,7 @@
                                 value="{{value}}" placeholder="{{placeholder}}"/>
                             {{/path_only}}
                             <!-- Hidden input to store the boolean value -->
-                            <input type="hidden" name="{{name}}_{{row_index}}_{{col_index}}_p" value="{{#boolean}}True{{/boolean}}{{^boolean}}False{{/boolean}}" />
+                            <input type="hidden" class="bool-input" name="{{name}}_{{row_index}}_{{col_index}}_p" value="{{#boolean}}True{{/boolean}}{{^boolean}}False{{/boolean}}" />
                             <button id="highlight-button" type="button" class="btn btn-sm btn-highlight {{#boolean}}highlight-true{{/boolean}}{{^boolean}}highlight-false{{/boolean}}"
                                 data-cell="{{name}}_{{row_index}}_{{col_index}}" 
                                 onclick="highlightCell(this)">
@@ -79,6 +71,29 @@
         {{/parse_error}}
     </span>
 </div>
+{{^is_material}}
+    <div style="text-align: center">
+        {{^path_only}}
+        <button type="button" id="clear-table" class="btn btn-danger">Clear All Inputs</button>
+        {{/path_only}}
+        {{#info}}
+        <a role="button" class="btn btn-light border" data-toggle="popover" data-html="true" title="DP table" data-content="{{info}}" data-placement="auto" data-trigger="focus" tabindex="0">
+            <i class="fa fa-question-circle" aria-hidden="true"></i>
+        </a>
+        {{/info}}
+        {{#all_correct}}
+            <span class="badge badge-success badge-primary"><i class="fas fa-check" aria-hidden="true"></i> 100%</span>
+        {{/all_correct}}    
+        {{^all_correct}}
+            {{#all_wrong}}
+                <span class="badge badge-danger badge-primary"><i class="fas fa-times" aria-hidden="true"></i> 0%</span>
+            {{/all_wrong}}
+            {{^all_wrong}}
+                <span class="badge badge-warning badge-primary"><i class="far fa-circle" aria-hidden="true"></i> {{partial_score}}%</span>
+            {{/all_wrong}}
+        {{/all_correct}}
+    </div>
+{{/is_material}}
 {{/question}}
 
 {{#submission}}
@@ -159,6 +174,21 @@
         {{/parse_error}}
     </span>
 </div>
+{{^is_material}}
+<div style="text-align: center">
+    {{#all_correct}}
+        <span class="badge badge-success badge-primary"><i class="fas fa-check" aria-hidden="true"></i> 100%</span>
+    {{/all_correct}}    
+    {{^all_correct}}
+        {{#all_wrong}}
+            <span class="badge badge-danger badge-primary"><i class="fas fa-times" aria-hidden="true"></i> 0%</span>
+        {{/all_wrong}}
+        {{^all_wrong}}
+            <span class="badge badge-warning badge-primary"><i class="far fa-circle" aria-hidden="true"></i> {{partial_score}}%</span>
+        {{/all_wrong}}
+    {{/all_correct}}
+</div>   
+{{/is_material}}
 {{/submission}}
 
 {{#answer}}
