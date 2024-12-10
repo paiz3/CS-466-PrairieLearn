@@ -70,30 +70,28 @@
             </a>
         {{/parse_error}}
     </span>
+    {{^is_material}}
+        <div style="display: flex; flex-direction: column; justify-content: center">
+            {{#info}}
+            <a role="button" class="btn btn-light border" data-toggle="popover" data-html="true" title="DP table" data-content="{{{info}}}" data-placement="auto" data-trigger="focus" tabindex="0">
+                <i class="fa fa-question-circle" aria-hidden="true"></i>
+            </a>
+            {{/info}}
+            {{#correct}}
+                <span class="badge badge-success badge-primary py-2"><i class="fas fa-check" aria-hidden="true"></i> 100%</span>
+            {{/correct}}    
+            {{#incorrect}}
+                <span class="badge badge-danger badge-primary py-2"><i class="fas fa-times" aria-hidden="true"></i> 0%</span>
+            {{/incorrect}}
+            {{#partial}}
+                <span class="badge badge-warning badge-primary py-2"><i class="far fa-circle" aria-hidden="true"></i> {{partial}}%</span>
+            {{/partial}}
+            {{^path_only}}
+            <button type="button" class="btn btn-danger clear-table">Clear All Inputs</button>
+            {{/path_only}}
+        </div>
+    {{/is_material}}
 </div>
-{{^is_material}}
-    <div style="text-align: center">
-        {{^path_only}}
-        <button type="button" id="clear-table" class="btn btn-danger">Clear All Inputs</button>
-        {{/path_only}}
-        {{#}}
-        <a role="button" class="btn btn-light border" data-toggle="popover" data-html="true" title="DP table" data-content="{{{}}}" data-placement="auto" data-trigger="focus" tabindex="0">
-            <i class="fa fa-question-circle" aria-hidden="true"></i>
-        </a>
-        {{/}}
-        {{#all_correct}}
-            <span class="badge badge-success badge-primary"><i class="fas fa-check" aria-hidden="true"></i> 100%</span>
-        {{/all_correct}}    
-        {{^all_correct}}
-            {{#all_wrong}}
-                <span class="badge badge-danger badge-primary"><i class="fas fa-times" aria-hidden="true"></i> 0%</span>
-            {{/all_wrong}}
-            {{^all_wrong}}
-                <span class="badge badge-warning badge-primary"><i class="far fa-circle" aria-hidden="true"></i> {{partial_score}}%</span>
-            {{/all_wrong}}
-        {{/all_correct}}
-    </div>
-{{/is_material}}
 {{/question}}
 
 {{#submission}}
@@ -123,16 +121,16 @@
     {{/missing_input}}
 </span>
 {{/error}}
-{{#all_correct}}
+{{#correct}}
 <div class="border border-success border-2 rounded-3">
     <p class="text-center"> You got it all correct! </p>
 </div>
-{{/all_correct}}
-{{^all_correct}}
+{{/correct}}
+{{^correct}}
 <div class="border border-danger border-2 rounded-3">
     <p class="text-center"> {{incorrect_message}} </p>
 </div>
-{{/all_correct}}
+{{/correct}}
 <div class="t-tbl-block">
     <table class="dp-table rounded-3 overflow-hidden">
         <thead>
@@ -173,22 +171,20 @@
             </a>
         {{/parse_error}}
     </span>
+    {{^is_material}}
+    <div style="display: flex; flex-direction: column; justify-content: center">
+        {{#correct}}
+            <span class="badge badge-success badge-primary py-2"><i class="fas fa-check" aria-hidden="true"></i> 100%</span>
+        {{/correct}}    
+        {{#incorrect}}
+            <span class="badge badge-danger badge-primary py-2"><i class="fas fa-times" aria-hidden="true"></i> 0%</span>
+        {{/incorrect}}
+        {{#partial}}
+            <span class="badge badge-warning badge-primary py-2"><i class="far fa-circle" aria-hidden="true"></i> {{partial}}%</span>
+        {{/partial}}
+    </div>
+    {{/is_material}}
 </div>
-{{^is_material}}
-<div style="text-align: center">
-    {{#all_correct}}
-        <span class="badge badge-success badge-primary"><i class="fas fa-check" aria-hidden="true"></i> 100%</span>
-    {{/all_correct}}    
-    {{^all_correct}}
-        {{#all_wrong}}
-            <span class="badge badge-danger badge-primary"><i class="fas fa-times" aria-hidden="true"></i> 0%</span>
-        {{/all_wrong}}
-        {{^all_wrong}}
-            <span class="badge badge-warning badge-primary"><i class="far fa-circle" aria-hidden="true"></i> {{partial_score}}%</span>
-        {{/all_wrong}}
-    {{/all_correct}}
-</div>   
-{{/is_material}}
 {{/submission}}
 
 {{#answer}}

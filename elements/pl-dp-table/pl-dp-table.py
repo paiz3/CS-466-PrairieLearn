@@ -74,9 +74,17 @@ def render(element_html: str, data: pl.QuestionData) -> str:
 
     raw_submitted_answer = data["raw_submitted_answers"].get(name)
     parse_error = data["format_errors"].get(name)
-    all_correct = data["score"] == 1
-    all_wrong = data["score"] == 0
-    partial_score = str(round(data["score"] * 100, 2))
+    score = data["partial_scores"].get(name, None)
+    correct = False
+    incorrect = False
+    partial = False
+    if score is not None:
+        raw_score = score.get("score", None)
+        if raw_score is not None:
+            correct = raw_score == 1
+            incorrect = raw_score == 0
+            if not correct and not incorrect:
+                partial = str(round(raw_score * 100, 2))
 
     feedback = data["partial_scores"].get(name, {"feedback": ""}).get("feedback", "")
     # Regular expression to capture i and j
@@ -147,7 +155,7 @@ def render(element_html: str, data: pl.QuestionData) -> str:
                         "Use the <i class='bi bi-highlighter fa-xs'></i> button at the bottom of each cell to hightlight ONE path that represents the optimum alignment.")
         editable = data["editable"]
         info_params = {
-            "format": True,
+            "format": True, 
             "grading_text": grading_text,
         }
         info = chevron.render(info_template, info_params).strip()
@@ -173,9 +181,9 @@ def render(element_html: str, data: pl.QuestionData) -> str:
             "correct_results": correct_results,
             "is_material": is_material,
             "path_only": path_only,
-            "all_correct": all_correct,
-            "all_wrong": all_wrong,
-            "partial_score": partial_score,
+            "correct": correct,
+            "incorrect": incorrect,
+            "partial": partial,
         }
         for row_index in range(num_rows):
             for col_index in range(num_columns):
@@ -210,10 +218,9 @@ def render(element_html: str, data: pl.QuestionData) -> str:
             "uuid": pl.get_uuid(),
             "columns": columns,
             "rows": rows,
-            # "correct_results": correct_results,
-            "all_correct": all_correct,
-            "all_wrong": all_wrong,
-            "partial_score": partial_score,
+            "correct": correct,
+            "incorrect": incorrect,
+            "partial": partial,
             "incorrect_message": feedback,
         }
         for row_index in range(num_rows):
@@ -476,11 +483,13 @@ def grade(element_html: str, data: pl.QuestionData) -> None:
     if path_only:
         data["partial_scores"][name] = {
             "score": path_score,
+            "weight": 1,
             "feedback": incorrect_message,
         }
     else:
         data["partial_scores"][name] = {
             "score": 0.5 * score_sum / (num_rows * num_columns) + 0.5 * path_score,
+            "weight": 1,
             "feedback": incorrect_message,
         }
 

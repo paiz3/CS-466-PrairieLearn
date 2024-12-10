@@ -8,9 +8,7 @@
     "zones": [
         {
             "questions": [
-                {"id": "sequenceAlignment/globalAlignment", "points": 1},
-                {"id": "sequenceAlignment/fittingAlignment", "points": 1},
-                {"id": "sequenceAlignment/localAlignment", "points": 1}
+                {"id": "sequenceAlignment", "points": 1}
             ]
         }
     ]

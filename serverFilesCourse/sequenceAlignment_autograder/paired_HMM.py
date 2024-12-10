@@ -87,7 +87,7 @@ def generate_paired_sequences(length):
     else:
         return "".join(sequence2), "".join(sequence1), state_sequence
 
-def test():
+def main():
     # Example usage
     seq_length = 3  # Desired length of sequences
     seq1, seq2, states = generate_paired_sequences(seq_length)
@@ -95,3 +95,6 @@ def test():
     print("Sequence 1:", seq1)
     print("Sequence 2:", seq2)
     print("State Path:", "".join(states))
+
+if __name__ == "__main__":
+    main()

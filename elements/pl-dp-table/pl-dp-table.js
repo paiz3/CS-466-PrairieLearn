@@ -1,21 +1,14 @@
 // Highlight the cell when the button is clicked
-function highlightCell(button) {    
-    // Define the theme colors
+function highlightCell(button) {
     const lightGray = 'rgb(249, 250, 251)';  // '#f9fafb'
-    const yellow = 'rgb(255, 235, 59)';  // '#ffeb3b'
+    const yellow = 'rgb(255, 235, 59)';      // '#ffeb3b'
 
-    // Get the data-cell attribute from the clicked button
     const cellIdentifier = button.getAttribute('data-cell');
-    // Find the parent <td> element that contains the input-container and button
-    const cell_ = document.querySelector(`.input-container[data-cell="${cellIdentifier}"]`).closest('td');
-    // Find the input field inside the same cell and change its background color
-    const input = cell_.querySelector('input');
-    // Use window.getComputedStyle to get the computed styles
+    const cellElement = document.querySelector(`.input-container[data-cell="${cellIdentifier}"]`).closest('td');
+    const input = cellElement.querySelector('input[type="number"]');
     const computedStyle = window.getComputedStyle(input);
-    // Retrieve the computed background color
     const backgroundColor = computedStyle.backgroundColor;
-    
-    // Toggle background color
+
     if (backgroundColor === yellow) {
         input.style.backgroundColor = lightGray;
         button.style.backgroundColor = lightGray;
@@ -24,123 +17,111 @@ function highlightCell(button) {
         button.style.backgroundColor = yellow;
     } else {
         console.log('Error: input.style.backgroundColor is not defined');
-        console.log(input.style.backgroundColor, typeof(input.style.backgroundColor));
     }
-    // boolean value control
-    const hiddenInput = cell_.querySelector('input[type="hidden"]');
-    if (hiddenInput.value == 'true' || hiddenInput.value == 'True') {
+
+    const hiddenInput = cellElement.querySelector('input[type="hidden"]');
+    const val = hiddenInput.value.toLowerCase();
+    if (val === 'true') {
         hiddenInput.value = false;
-    } else if (hiddenInput.value == 'false' || hiddenInput.value == 'False') {
+    } else if (val === 'false') {
         hiddenInput.value = true;
     } else {
-        console.log('Error: hiddenInput.value is not a boolean');
-        console.log(hiddenInput.value, typeof(hiddenInput.value));
+        console.log('Error: hiddenInput.value is not a boolean', hiddenInput.value);
     }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Select all number input cells in the table
-    const inputs = Array.from(document.querySelectorAll("input[type='number']"));
+    // For each table container, handle navigation and clearing
+    document.querySelectorAll(".t-tbl-block").forEach((tableContainer) => {
+        // Get all number inputs in this table
+        const inputs = Array.from(tableContainer.querySelectorAll("input[type='number']"));
 
-    // Sort inputs by their row and column indices for logical navigation
-    const sortedInputs = inputs.sort((a, b) => {
-        const rowA = parseInt(a.closest("td").dataset.row, 10);
-        const rowB = parseInt(b.closest("td").dataset.row, 10);
-        const colA = parseInt(a.closest("td").dataset.col, 10);
-        const colB = parseInt(b.closest("td").dataset.col, 10);
-
-        return rowA - rowB || colA - colB;
-    });
-
-    // Add keydown event listeners to all inputs
-    sortedInputs.forEach((input, index) => {
-        input.addEventListener("keydown", (event) => {
-            let nextIndex = index;
-            const currentCell = input.closest("td");
-            const currentRow = parseInt(currentCell.dataset.row, 10);
-            const currentCol = parseInt(currentCell.dataset.col, 10);
-
-            switch (event.key) {
-                case "ArrowUp": // Navigate up
-                    event.preventDefault(); // Prevent number increment
-                    nextIndex = sortedInputs.findIndex(
-                        (inp) =>
-                            parseInt(inp.closest("td").dataset.row, 10) === currentRow - 1 &&
-                            parseInt(inp.closest("td").dataset.col, 10) === currentCol
-                    );
-                    break;
-                case "ArrowDown": // Navigate down
-                    event.preventDefault(); // Prevent number decrement
-                    nextIndex = sortedInputs.findIndex(
-                        (inp) =>
-                            parseInt(inp.closest("td").dataset.row, 10) === currentRow + 1 &&
-                            parseInt(inp.closest("td").dataset.col, 10) === currentCol
-                    );
-                    break;
-                case "ArrowLeft": // Navigate left
-                    event.preventDefault(); // Prevent default behavior
-                    nextIndex = index - 1;
-                    break;
-                case "ArrowRight": // Navigate right
-                    event.preventDefault(); // Prevent default behavior
-                    nextIndex = index + 1;
-                    break;
-                default:
-                    return; // Do nothing for other keys
-            }
-
-            // Ensure the nextIndex is within bounds and valid
-            if (nextIndex >= 0 && nextIndex < sortedInputs.length) {
-                const nextInput = sortedInputs[nextIndex];
-                nextInput.focus();
-                nextInput.select();
-            }
+        // Sort inputs by row and column for logical navigation
+        const sortedInputs = inputs.sort((a, b) => {
+            const rowA = parseInt(a.closest("td").dataset.row, 10);
+            const rowB = parseInt(b.closest("td").dataset.row, 10);
+            const colA = parseInt(a.closest("td").dataset.col, 10);
+            const colB = parseInt(b.closest("td").dataset.col, 10);
+            return rowA - rowB || colA - colB;
         });
-    });
-    // Function to clear inputs
-    function clearInputs(event) {
-        // Prevent any default behavior (e.g., form submission)
-        if (event) {
-            event.preventDefault();
+
+        // Add keydown event listeners to inputs in this table
+        sortedInputs.forEach((input, index) => {
+            input.addEventListener("keydown", (event) => {
+                let nextIndex = index;
+                const currentCell = input.closest("td");
+                const currentRow = parseInt(currentCell.dataset.row, 10);
+                const currentCol = parseInt(currentCell.dataset.col, 10);
+
+                switch (event.key) {
+                    case "ArrowUp": // Navigate up
+                        event.preventDefault();
+                        nextIndex = sortedInputs.findIndex(
+                            (inp) =>
+                                parseInt(inp.closest("td").dataset.row, 10) === currentRow - 1 &&
+                                parseInt(inp.closest("td").dataset.col, 10) === currentCol
+                        );
+                        break;
+                    case "ArrowDown": // Navigate down
+                        event.preventDefault();
+                        nextIndex = sortedInputs.findIndex(
+                            (inp) =>
+                                parseInt(inp.closest("td").dataset.row, 10) === currentRow + 1 &&
+                                parseInt(inp.closest("td").dataset.col, 10) === currentCol
+                        );
+                        break;
+                    case "ArrowLeft": // Navigate left
+                        event.preventDefault();
+                        nextIndex = index - 1;
+                        break;
+                    case "ArrowRight": // Navigate right
+                        event.preventDefault();
+                        nextIndex = index + 1;
+                        break;
+                    default:
+                        return; // Do nothing for other keys
+                }
+
+                // Ensure nextIndex is valid and focus that input
+                if (nextIndex >= 0 && nextIndex < sortedInputs.length) {
+                    const nextInput = sortedInputs[nextIndex];
+                    nextInput.focus();
+                    nextInput.select();
+                }
+            });
+        });
+
+        // Attach event listener to the clear button within this table, if present
+        const clearButton = tableContainer.querySelector(".clear-table");
+        if (clearButton) {
+            clearButton.addEventListener("click", (event) => {
+                event.preventDefault();
+
+                const numberInputs = tableContainer.querySelectorAll("input[type='number']");
+                const boolInputs = tableContainer.querySelectorAll(".bool-input");
+
+                numberInputs.forEach(input => {
+                    input.value = 0;
+                    input.style.backgroundColor = 'rgb(249, 250, 251)';
+                });
+
+                boolInputs.forEach(input => {
+                    input.value = false;
+                    const container = input.closest(".input-container");
+                    if (container) {
+                        const numberInput = container.querySelector("input[type='number']");
+                        const button = container.querySelector("button");
+
+                        if (numberInput) {
+                            numberInput.style.backgroundColor = 'rgb(249, 250, 251)';
+                        }
+
+                        if (button) {
+                            button.style.backgroundColor = 'rgb(249, 250, 251)';
+                        }
+                    }
+                });
+            });
         }
-
-        // Select all number and hidden inputs in the table
-        const numberInputs = document.querySelectorAll("input[type='number']");
-        const boolInputs = document.querySelectorAll(".bool-input");
-
-        // Set number inputs to 0
-        numberInputs.forEach(input => {
-            input.value = 0;
-        });
-
-        // Set hidden inputs to "False"
-        boolInputs.forEach(input => {
-            input.value = false;
-
-            // Find the associated input container and its background
-            const container = input.closest(".input-container");
-            if (container) {
-                const numberInput = container.querySelector("input");
-                const button = container.querySelector("button");
-
-                if (numberInput) {
-                    numberInput.style.backgroundColor = 'rgb(249, 250, 251)' // Reset background color
-
-                }
-
-                if (button) {
-                    button.style.backgroundColor = 'rgb(249, 250, 251)' // Reset background color
-
-                }
-            }
-        });
-    }
-
-    // Attach event listener to the clear button
-    const clearButton = document.getElementById("clear-table");
-    if (clearButton) {
-        clearButton.addEventListener("click", clearInputs);
-    } else {
-        console.error("Clear button not found in the DOM.");
-    }
+    });
 });

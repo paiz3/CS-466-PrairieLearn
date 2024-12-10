@@ -1,8 +1,3 @@
-import sys
-
-sys.path.append("..")
-from PairedHMM import generate_paired_sequences
-
 keys = ["A", "C", "T", "G", "-"]
 delta = {}
 for i in range(len(keys)):
@@ -20,6 +15,17 @@ ORIGIN = (0, 0)
 
 
 def traceback_fitting(v, w, init_j, pointers):
+    """
+    Returns the score of the maximum scoring alignment of short and all
+    substrings of reference.
+    
+    :param: short the shorter of the two strings we are trying to align
+    :param: reference the longer string among whose substrings we are doing global alignment
+    :param: delta the scoring function for the alphabet of the two strings
+    :param: init_j the starting index of the longer string
+    
+    :returns: a tuple (score, alignment)
+    """
     i, j = len(v), init_j
     new_v = []
     new_w = []
@@ -42,7 +48,7 @@ def traceback_fitting(v, w, init_j, pointers):
     return "".join(new_v[::-1]) + "\n" + "".join(new_w[::-1]), path
 
 
-def fitting_align(short, reference, delta):
+def fitting_align(short, reference):
     """
     Returns the score of the maximum scoring alignment of short and all
     substrings of reference.
@@ -83,10 +89,3 @@ def fitting_align(short, reference, delta):
     score, init_j = score_list[0]
     alignment, path = traceback_fitting(short, reference, init_j, pointers)
     return M, alignment, path, score
-
-def generate(data):
-    data["params"]["v"], data["params"]["w"], _ = generate_paired_sequences(4)
-
-    ###### Quesiton 2 ########
-    data["correct_answers"]["q2"] = fitting_align(data["params"]["v"], data["params"]["w"], delta)
-    data["params"]["int1"] = fitting_align(data["params"]["v"], data["params"]["w"], delta)[3]

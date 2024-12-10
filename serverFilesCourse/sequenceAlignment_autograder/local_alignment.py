@@ -1,8 +1,3 @@
-import sys
-
-sys.path.append("..")
-from PairedHMM import generate_paired_sequences
-
 keys = ["A", "C", "T", "G", "-"]
 delta = {}
 for i in range(len(keys)):
@@ -42,7 +37,7 @@ def traceback_local(v, w, M, init_i, init_j, pointers):
     return "".join(new_v[::-1]) + "\n" + "".join(new_w[::-1]), path
 
 
-def local_align(v, w, delta):
+def local_align(v, w):
     """
     Returns the score of the maximum scoring alignment of all possible substrings of v and w.
 
@@ -76,9 +71,3 @@ def local_align(v, w, delta):
     score, [init_i, init_j] = score_list[0]
     alignment, path = traceback_local(v, w, M, init_i, init_j, pointers)
     return M, alignment, path, score
-
-def generate(data):
-    data["params"]["v"], data["params"]["w"], _ = generate_paired_sequences(4)
-
-    ###### Quesiton 3 ########
-    data["correct_answers"]["q3"] = local_align(data["params"]["v"], data["params"]["w"], delta)

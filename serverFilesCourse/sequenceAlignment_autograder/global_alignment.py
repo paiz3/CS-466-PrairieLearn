@@ -1,8 +1,3 @@
-import sys
-
-sys.path.append("..")
-from PairedHMM import generate_paired_sequences
-
 keys = ["A", "C", "T", "G", "-"]
 delta = {}
 for i in range(len(keys)):
@@ -42,7 +37,7 @@ def traceback_global(v, w, pointers):
     return "".join(new_v[::-1]) + "\n" + "".join(new_w[::-1]), path
 
 
-def global_alignment(v, w, delta):
+def global_alignment(v, w):
     """
     Returns the score of the maximum scoring alignment of the strings v and w, as well as the actual alignment as
     computed by traceback_global.
@@ -71,11 +66,3 @@ def global_alignment(v, w, delta):
             M[i][j], pointers[i][j] = max_list[0]
     alignment, path = traceback_global(v, w, pointers)
     return M, alignment, path, M[len(v)][len(w)]
-
-
-def generate(data):
-    data["params"]["v"], data["params"]["w"], _ = generate_paired_sequences(4)
-
-    ###### Quesiton 1 ########
-    data["correct_answers"]["q1"] = global_alignment(data["params"]["v"], data["params"]["w"], delta)
-    data["params"]["str1"], data["params"]["str2"] = global_alignment(data["params"]["v"], data["params"]["w"], delta)[1].split("\n")
