@@ -12,7 +12,10 @@ A customizable DP table designed to handle both instructional materials (where a
 | `type`         | Alignment type (`global`, `fitting`, or `local`) that affects path constraints    | ✅        | `global`         |
 | `placeholder`  | Placeholder text for DP cell inputs                                     | ✅        | `None`           |
 
-## Element Functionality
+### Element Functionality
+
+- **Basic Functions:**
+  For each cell, click upper half of the cell to enter number for the upper half. Use the highlighter button at the bottom of each cell to hightlight ONE path that represents the optimum alignment."
 
 - **Material Mode (`is-material="true"`):**  
   Displays the fully computed DP table and path without user interaction.
