@@ -39,24 +39,11 @@ A customizable DP table designed to handle both instructional materials (where a
 **question.html**
 
 ```html
-    <pl-dp-table
-      answers-name="q1"
-      is-material="true"
-      type="global"
-    ></pl-dp-table>
+    <pl-dp-table answers-name="q1" is-material="true" type="global"></pl-dp-table>
 ```
 
 #### Sample Element 2
-![image](res/score.png.png)
-
-**question.html**
-
-```html
-  <pl-dp-table answers-name="q2" path-only="true" type="fitting"></pl-dp-table>
-```
-
-#### Sample Element 2
-![image](res/score.png.png)
+![image](res/score.png)
 
 **question.html**
 
@@ -65,7 +52,7 @@ A customizable DP table designed to handle both instructional materials (where a
 ```
 
 #### Sample Element 3
-![image](res/score.png.png)
+![image](res/alignment.pngpng)
 
 **question.html**
 
