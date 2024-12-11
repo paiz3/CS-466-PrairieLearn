@@ -7,14 +7,10 @@ A customizable DP table designed to handle both instructional materials (where a
 | Attribute      | Description                                                             | Optional | Default Value    |
 |----------------|-------------------------------------------------------------------------|----------|------------------|
 | `answers-name` | Unique identifier for this DP table instance                            | ❌ (Required) |                  |
-| `label`        | A user-friendly label for the DP table                                  | ✅        | `None`           |
 | `is-material`  | If true, displays a read-only DP table (informational only)             | ✅        | `False`          |
 | `path-only`    | If true, students can only select the path and not edit DP cell values  | ✅        | `False`          |
-| `type`         | Alignment type (`global` or `fitting`) that affects path constraints    | ✅        | `global`         |
+| `type`         | Alignment type (`global`, `fitting`, or `local`) that affects path constraints    | ✅        | `global`         |
 | `placeholder`  | Placeholder text for DP cell inputs                                     | ✅        | `None`           |
-| `show-help-text` | Whether to show help text (info popover)                              | ✅        | `True`           |
-| `show-score`   | If true, shows partial scoring info (e.g., percentages)                 | ✅        | `True`           |
-| `size`         | Width of the DP cell input in characters       
 
 ## Element Functionality
 
@@ -27,17 +23,16 @@ A customizable DP table designed to handle both instructional materials (where a
 - **Fully Editable Mode (default):**  
   Students fill all DP cells and select the path. Grading occurs only if all DP cells are correct, ensuring that the correct path can be validated afterward.
 
+- **Clear All button:**
+  Clear all inputs, both numeric values and path selection for this quesition. This button is only shown under fully editable mode (default).
+
+- **Arrow Key Naviagtion:**
+  Use arrow keys on the keyboard to quickly navigate among cells in the table.
+
 ### Usage
 
 Add this element to the question's HTML template and customize as desired. This can go anywhere in the question template, and it will render a truth table.
 
 ```html
-    <pl-dp-table answers-name="q1"></pl-dp-table>
+    <pl-dp-table answers-name="q1" type="local"></pl-dp-table>
 ```
-
-### Developer Notes
-
-In progress:
-
-- Use arrow key to quickly navigating in the table.
-- Allow path-only or score-only question toggles.
