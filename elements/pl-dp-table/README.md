@@ -32,10 +32,43 @@ A customizable DP table designed to handle both instructional materials (where a
 - **Arrow Key Naviagtion:**
   Use arrow keys on the keyboard to quickly navigate among cells in the table.
 
-### Usage
+## Example Usage
+#### Sample Element 1
+![image](res/sequence_only.png)
 
-Add this element to the question's HTML template and customize as desired. This can go anywhere in the question template, and it will render a truth table.
+**question.html**
 
 ```html
-    <pl-dp-table answers-name="q1" type="local"></pl-dp-table>
+    <pl-dp-table
+      answers-name="q1"
+      is-material="true"
+      type="global"
+    ></pl-dp-table>
+```
+
+#### Sample Element 2
+![image](res/score.png.png)
+
+**question.html**
+
+```html
+  <pl-dp-table answers-name="q2" path-only="true" type="fitting"></pl-dp-table>
+```
+
+#### Sample Element 2
+![image](res/score.png.png)
+
+**question.html**
+
+```html
+  <pl-dp-table answers-name="q2" path-only="true" type="fitting"></pl-dp-table>
+```
+
+#### Sample Element 3
+![image](res/score.png.png)
+
+**question.html**
+
+```html
+  <pl-dp-table answers-name="q3" type="local"></pl-dp-table>
 ```
