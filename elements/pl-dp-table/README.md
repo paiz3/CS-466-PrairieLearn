@@ -52,7 +52,7 @@ A customizable DP table designed to handle both instructional materials (where a
 ```
 
 #### Sample Element 3
-![image](res/alignment.pngpng)
+![image](res/alignment.png)
 
 **question.html**
 
