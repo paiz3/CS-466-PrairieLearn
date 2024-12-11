@@ -2,6 +2,31 @@
 
 A customizable DP table designed to handle both instructional materials (where answers are displayed directly) and interactive question components (where users can input answers).
 
+### Element Attributes
+
+| Attribute      | Description                                                             | Optional | Default Value    |
+|----------------|-------------------------------------------------------------------------|----------|------------------|
+| `answers-name` | Unique identifier for this DP table instance                            | ❌ (Required) |                  |
+| `label`        | A user-friendly label for the DP table                                  | ✅        | `None`           |
+| `is-material`  | If true, displays a read-only DP table (informational only)             | ✅        | `False`          |
+| `path-only`    | If true, students can only select the path and not edit DP cell values  | ✅        | `False`          |
+| `type`         | Alignment type (`global` or `fitting`) that affects path constraints    | ✅        | `global`         |
+| `placeholder`  | Placeholder text for DP cell inputs                                     | ✅        | `None`           |
+| `show-help-text` | Whether to show help text (info popover)                              | ✅        | `True`           |
+| `show-score`   | If true, shows partial scoring info (e.g., percentages)                 | ✅        | `True`           |
+| `size`         | Width of the DP cell input in characters       
+
+## Element Functionality
+
+- **Material Mode (`is-material="true"`):**  
+  Displays the fully computed DP table and path without user interaction.
+  
+- **Path-Only Mode (`path-only="true"`):**  
+  Students only select which cells form the alignment path, but cannot edit numeric values.
+  
+- **Fully Editable Mode (default):**  
+  Students fill all DP cells and select the path. Grading occurs only if all DP cells are correct, ensuring that the correct path can be validated afterward.
+
 ### Usage
 
 Add this element to the question's HTML template and customize as desired. This can go anywhere in the question template, and it will render a truth table.
@@ -9,15 +34,6 @@ Add this element to the question's HTML template and customize as desired. This 
 ```html
     <pl-dp-table answers-name="q1"></pl-dp-table>
 ```
-
-### Element Attributes
-
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `answers-name` | string (required) | Name of the question. |
-| `prefill` | string (default: `0`) | The value prefilled in input boxes. |
-| `placeholder` | string (default: `0`) | The value placeholder shown in input boxes. |
-| `is-material` | boolean (default: `false`) | Set it to `true` to use the DP table as a question material. |
 
 ### Developer Notes
 
