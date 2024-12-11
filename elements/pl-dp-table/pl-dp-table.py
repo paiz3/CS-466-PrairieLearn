@@ -24,6 +24,18 @@ DP_TABLE_MUSTACHE_TEMPLATE_NAME = "pl-dp-table.mustache"
 
 
 def prepare(element_html: str, data: pl.QuestionData) -> None:
+    """
+    Prepare the data for the question.
+    
+    This function is called before the question is rendered.
+    
+    Args:
+        element_html: The HTML of the element.
+        data: The data object for the question.
+        
+    Returns:
+        None
+    """
     element = lxml.html.fragment_fromstring(element_html)
     required_attribs = ["answers-name"]
     optional_attribs = [
@@ -61,6 +73,18 @@ def prepare(element_html: str, data: pl.QuestionData) -> None:
 
 
 def render(element_html: str, data: pl.QuestionData) -> str:
+    """
+    Render the question.
+    
+    This function is called to render the question.
+    
+    Args:
+        element_html: The HTML of the element.
+        data: The data object for the question. 
+    
+    Returns:
+        str: The rendered question.
+    """
     element = lxml.html.fragment_fromstring(element_html)
     name = pl.get_string_attrib(element, "answers-name")
     label = pl.get_string_attrib(element, "label", LABEL_DEFAULT)
@@ -115,7 +139,9 @@ def render(element_html: str, data: pl.QuestionData) -> str:
                 numerical_answer = pl.from_json(
                     data["correct_answers"].get(f"{name}_{i}_{j}", "")
                 )
-                boolean_answer = pl.from_json(data["correct_answers"].get(f"{name}_{i}_{j}_p", False))
+                boolean_answer = pl.from_json(
+                    data["correct_answers"].get(f"{name}_{i}_{j}_p", False)
+                )
             elif path_only:
                 numerical_answer = pl.from_json(
                     data["correct_answers"].get(f"{name}_{i}_{j}", "")
@@ -151,11 +177,13 @@ def render(element_html: str, data: pl.QuestionData) -> str:
         template = f.read()
     if data["panel"] == "question":
         info_template = "{{#format}}<p>{{{grading_text}}}</p>{{/format}}"
-        grading_text = ("For each cell, click upper half of the cell to enter number for the upper half. Use arrow keys to quickly navigate through the table. <br />" 
-                        "Use the <i class='bi bi-highlighter fa-xs'></i> button at the bottom of each cell to hightlight ONE path that represents the optimum alignment.")
+        grading_text = (
+            "For each cell, click upper half of the cell to enter number for the upper half. Use arrow keys to quickly navigate through the table. <br />"
+            "Use the <i class='bi bi-highlighter fa-xs'></i> button at the bottom of each cell to hightlight ONE path that represents the optimum alignment."
+        )
         editable = data["editable"]
         info_params = {
-            "format": True, 
+            "format": True,
             "grading_text": grading_text,
         }
         info = chevron.render(info_template, info_params).strip()
@@ -306,6 +334,18 @@ def render(element_html: str, data: pl.QuestionData) -> str:
 
 
 def parse(element_html: str, data: pl.QuestionData) -> None:
+    """
+    Parse the submitted answers.
+    
+    This function is called to parse the submitted answers.
+    
+    Args:
+        element_html: The HTML of the element.
+        data: The data object for the question.
+        
+    Returns:
+        None
+    """
     element = lxml.html.fragment_fromstring(element_html)
     name = pl.get_string_attrib(element, "answers-name")
 
@@ -356,6 +396,18 @@ def parse(element_html: str, data: pl.QuestionData) -> None:
 
 
 def grade(element_html: str, data: pl.QuestionData) -> None:
+    """
+    Grade the submitted answers.
+    
+    This function is called to grade the submitted answers.
+    
+    Args:
+        element_html: The HTML of the element.
+        data: The data object for the question.
+        
+    Returns:
+        None
+    """
     incorrect_message = ""
 
     element = lxml.html.fragment_fromstring(element_html)

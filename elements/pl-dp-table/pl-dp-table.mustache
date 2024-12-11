@@ -14,7 +14,6 @@
             <tr>
                 <td>{{v_letter}}</td>
                 {{#is_material}}
-                <!-- If it is question material, display correct answer directly -->
                     {{#data}}
                         <td class="{{#boolean}}highlight-true{{/boolean}}{{^boolean}}highlight-false{{/boolean}}">
                             {{value}}
@@ -22,7 +21,6 @@
                     {{/data}}
                 {{/is_material}}
                 {{^is_material}}
-                <!-- If it is question-required material, use input field -->
                 {{#data}}
                     <td data-row="{{row_index}}" data-col="{{col_index}}" class="alignment-cell">
                         <div class="input-container" data-cell="{{name}}_{{row_index}}_{{col_index}}">
@@ -38,7 +36,6 @@
                                 onclick="this.select()"
                                 value="{{value}}" placeholder="{{placeholder}}"/>
                             {{/path_only}}
-                            <!-- Hidden input to store the boolean value -->
                             <input type="hidden" class="bool-input" name="{{name}}_{{row_index}}_{{col_index}}_p" value="{{#boolean}}True{{/boolean}}{{^boolean}}False{{/boolean}}" />
                             <button id="highlight-button" type="button" class="btn btn-sm btn-highlight {{#boolean}}highlight-true{{/boolean}}{{^boolean}}highlight-false{{/boolean}}"
                                 data-cell="{{name}}_{{row_index}}_{{col_index}}" 
