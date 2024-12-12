@@ -6,15 +6,10 @@ A customizable DP table designed to handle both instructional materials (where a
 | Attribute      | Description                                                             | Optional | Default Value    |
 |----------------|-------------------------------------------------------------------------|----------|------------------|
 | `answers-name` | Unique identifier for this DP table instance                            | ❌ (Required) |                  |
-| `label`        | A user-friendly label for the DP table                                  | ✅        | `None`           |
 | `is-material`  | If true, displays a read-only DP table (informational only)             | ✅        | `False`          |
 | `path-only`    | If true, students can only select the path and not edit DP cell values  | ✅        | `False`          |
 | `type`         | Alignment type (`global` or `fitting`) that affects path constraints    | ✅        | `global`         |
 | `placeholder`  | Placeholder text for DP cell inputs                                     | ✅        | `None`           |
-| `show-help-text` | Whether to show help text (info popover)                              | ✅        | `True`           |
-| `show-score`   | If true, shows partial scoring info (e.g., percentages)                 | ✅        | `True`           |
-| `size`         | Width of the DP cell input in characters                                | ✅        | `35`             |
-
 
 ### Element Functionality
 
@@ -38,6 +33,7 @@ A customizable DP table designed to handle both instructional materials (where a
 
 ## Example Usage
 #### Sample Element 1
+Answer question about the alignment using the given DP table.
 ![image](res/sequence_only.png)
 
 **question.html**
@@ -47,6 +43,7 @@ A customizable DP table designed to handle both instructional materials (where a
 ```
 
 #### Sample Element 2
+Highlight the optimal path using the given scores.
 ![image](res/score.png)
 
 **question.html**
@@ -56,6 +53,7 @@ A customizable DP table designed to handle both instructional materials (where a
 ```
 
 #### Sample Element 3
+Fill in the scores and highlight the optimal path.
 ![image](res/alignment.png)
 
 **question.html**
