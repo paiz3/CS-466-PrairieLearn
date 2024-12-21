@@ -4,7 +4,7 @@ We have provided a solution for autogenerating and autograded sequence alignment
 
 ### Implementing it Online
 
-Copy the following files to your PrairieLearn course and put them under the same folder. The `pl-dp-table` element and the autograder code are the core to this project. You may want to include the examples to see the interface before using it.
+Copy the following folders/files to your PrairieLearn course and put them under corresponding path. The `pl-dp-table` element and the autograder code are the core of this project. You may want to include the examples to see the interface before using it.
 
 #### Element
 
